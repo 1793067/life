@@ -1,0 +1,116 @@
+const lib = [];
+
+lib.water = function(num) {
+  lib.size = num;
+  for (let i = 1; i <= num; i++) {
+    for (let j = 1; j <= num; j++) {
+      addLib(i,j, "water", 0)
+    }
+  };
+};
+
+lib.field = function(num) {
+  if (hasElem("field", lib).length == 0) {
+    addLib(...directions.randMove(randCoord()).coords, "field", 0);
+    num-=1;
+  };
+    
+  for (let i = 0; i < hasElem("field", lib).length; i++) {
+    let item = hasElem("field", lib)[ Math.floor(Math.random() * hasElem("field", lib).length) ];
+    while (directions.randMove(item.coords) && num > 0) {
+        addLib(...directions.randMove(item.coords).coords, "field", 0);
+        num-=1;
+    }; 
+  };
+};
+
+
+let directions = [
+  [0, -1],
+  [1, -1],
+  [1,  0],
+  [1, 1],
+  [0, 1],
+  [-1, 1],
+  [-1, 0],
+  [-1, -1]
+];
+
+directions.randMove = function(elem){
+  const [x,y] = elem;
+  if (directions.every(item => {
+    let quest = hasElem([x+item[0], y+item[1]] ,lib);
+    //console.log(quest);
+    //console.log(!quest || quest.type == "field");
+    return (!quest || quest.type == "field")
+  })) return false;
+  
+  let randMove = Math.floor(Math.random() * directions.length);
+  let quest = hasElem([x+directions[randMove][0], y+directions[randMove][1]] ,lib);
+                            
+                        
+  while (!quest || quest.type == "field") {
+    randMove = Math.floor(Math.random() * directions.length);
+    quest = hasElem([x+directions[randMove][0], y+directions[randMove][1]] ,lib);
+  };
+  
+  return quest;                      
+};
+
+
+
+
+function randCoord() {
+  return lib.size ? [Math.floor(Math.random() * lib.size)+1, Math.floor(Math.random() * lib.size)+1] : "no map"
+}
+
+
+function addLib(x,y,type,age){
+  if (!hasElem([x,y], lib)) {
+    lib.push({
+      coords: [x, y],
+      type: type,
+      age: age
+    });
+
+  } else {
+      hasElem([x,y], lib).type = type;
+      hasElem([x,y], lib).age = age;
+    }
+};
+
+function hasElem(exp, library) {
+  if (Array.isArray(exp)) return library.reduce((val,cur) => (cur.coords[0] == exp[0] && cur.coords[1] == exp[1]) ? cur : val, false);
+  if (typeof exp == "string") return library.filter(item => item.type == exp);
+  if (typeof exp == "number") return library.filter(item => item.age == exp);
+};
+
+ function create(type, count) {
+   lib[type] ? lib[type](count) : console.log("no such type")
+ };
+
+create("water", 10);
+
+create("field", 50);
+
+const elem = [1,1,"field", 0];
+const elem2 = [2,2,"water", 0];
+
+//addLib(...elem);
+
+
+//console.log(hasElem(elem, lib).age);
+//console.log(hasElem(elem2, lib).type);
+//console.log(`all ${lib.length} field: ${hasElem("field", lib).length}`)
+
+let str = "";
+let k = 0;
+for (let i = 0; i < lib.length; i++) {
+    for (let j = 0; j < Math.floor(Math.sqrt(lib.length)); j++) {
+      str+=/*lib[k].coords+*/" "+ lib[k].type +" "
+k+=1;
+    }
+  console.log(str);
+  //console.log("");
+  str="";
+  };
