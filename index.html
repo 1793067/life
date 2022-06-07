@@ -7,23 +7,48 @@
   <title>JS Bin</title>
 </head>
 <body>
-	<section>
-		<input type="text" value="+1" id="test">
-		<input type="submit" value="start" onclick="start()">
-		<input type="submit" value="stop" onclick="stop()">
-	</section>
+	
 		
 	<div class="gameField"></div>
+	<div class="control">
+		<section>
+			<input type="text" value="+1" id="test">
+			<input type="submit" value="start" onclick="start()">
+			<input type="submit" value="stop" onclick="stop()">
+		</section>
+		
+		<form action="#" method="get" onsubmit="genElement()">
+			<label>map size<br>
+				<input type="range" min="10" max="25" value="20" id="gridCount" 
+				onchange="document.getElementById('gridValue').innerHTML=this.value;">
+				<span id="gridValue">20</span>
+			</label>
+			<label>percentage of land<br>
+				<input type="range" min="10" max="100" value="50" id="fieldCount" 
+				onchange="document.getElementById('landPercent').innerHTML=`${this.value}%`;">
+				<span id="landPercent">50%</span>
+			</label>
+			<label>percentage of vegetation<br>
+				<input type="range" min="10" max="100" value="50" id="treeCount" 
+				onchange="document.getElementById('vegPercent').innerHTML=`${this.value}%`;">
+				<span id="vegPercent">50%</span>
+			</label>
+			
+			
+			<label>animal type 
+				<select id="animalType">
+					<option value="plantEater">plantEater</option>
+					<option value="predator">predator</option>
+				</select>
+			</label>
 
-	<section>
-			<input type="text" id="gridCount" placeholder="grid count">
-			<input type="text" id="fieldCount" placeholder="field count">
-			
-			<input type="text" id="animalType" placeholder="animal type">
-			<input type="text" id="animalCount" placeholder="animal/tree count">			
-			
-			<input id ="start" input type="button" value="create world" onclick="genElement()">
-	</section>
+			<input type="text" id="animalCount" placeholder="animal count">			
+				
+			<input id ="start" input type="submit" value="create world">
+		</form>
+	</div>
+
+	
 <!-- 	<script src="script.js" type="module"></script> -->
 	<script src="script_no_modules.js"></script>
 	<!-- <script src="world.js" type="module"></script> -->

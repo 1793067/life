@@ -29,15 +29,15 @@ class Grid {
   
   
 	hasElem(exp){
-//принимает на вход координаты [x,y] или тип элемента "field"
-//если аргумент - координаты возвращается true/false в зависимости от наличия координат в библиотеке Grid.lib
-//если аргумент - строка - возвращается массив координат с данным типом из библиотеки Grid.lib
+//РџСЂРёРЅРёРјР°РµС‚ РЅР° РІС…РѕРґ РєРѕРѕСЂРґРёРЅР°С‚С‹ [x,y] РёР»Рё С‚РёРї СЌР»РµРјРµРЅС‚Р° "field"
+//РµСЃР»Рё СЌР»РµРјРµРЅС‚ - РєРѕРѕСЂРґРёРЅР°С‚С‹, С‚Рѕ РІРѕР·РІСЂР°С‰Р°РµС‚ true/false РІ Р·Р°РІРёСЃРёРјРѕСЃС‚Рё РѕС‚ РёС… РЅР°Р»РёС‡РёСЏ РІ Р±РёР±Р»РёРѕС‚РµРєРµ Grid.lib
+//РµСЃР»Рё Р°СЂРіСѓРјРµРЅС‚ - СЃС‚СЂРѕРєР°, С‚Рѕ РІРѕР·РІСЂР°С‰Р°РµС‚СЃСЏ РјР°СЃСЃРёРІ РєРѕРѕСЂРґРёРЅР°С‚ СЃ РґР°РЅРЅС‹Рј С‚РёРїРѕРј РёР· Р±РёР±Р»РёРѕС‚РµРєРё Grid.lib
 	  if (Array.isArray(exp)) return this.lib.reduce((val,cur) => same(cur.coords, exp) ? cur : val, false);
 	  if (typeof exp == "string") return this.lib.filter(item => item.type == exp);
 	}
   
 	addLib(x,y,type,mark){
-//добавление или корректировка элементов в библиотеке lib
+//РґРѕР±Р°РІР»РµРЅРёРµ РёР»Рё РєРѕСЂСЂРµРєС‚РёСЂРѕРІРєР° СЌР»РµРјРµРЅС‚РѕРІ РІ Р±РёР±Р»РёРѕС‚РµРєРµ lib
 	  if (!this.hasElem([x,y])) {
 		this.lib.push({
 		  coords: [x, y],
@@ -346,40 +346,7 @@ class World {
 			}
 
 		}
-//-----------------------------------
 
-/*	window.print = function() {
-		let grid = new Grid(10, 10);
-		grid.create("water");	
-		grid.create("field", 50);
-
-		//grid.toString();
-		
-		let world = new World(grid);
- 		let plantEater = new Animal("plantEater", "field", 10, "o", []);
-		let croc = new Animal("crocodile", "water", 10, "^", []);
-		let tree = new Animal("tree", "field", 5, "*", actions);
-		
-		//world.createAnimal(plantEater, [2,2]);
-		world.createAnimal(plantEater, 3);
-		world.createAnimal(croc, 1);
-		world.createAnimal(tree, 5);
-		
-		world.toString();
-		
-		let randomPlantEater = randomElem( world.existAnimal(i => i.name == "plantEater") ).coords;
-		world.destroyAnimal(randomPlantEater);
-		
-		for (let i = 0; i < 10; i++) {
-			world.turn();
-			world.toString();
-		};
-		
-	};
-	
-	print();*/
-	
-	/*-----------------------------------------------------------------------------------------------------------*/
 
 let grid = {};
 let world ={};
@@ -387,10 +354,8 @@ let world ={};
 
 const encyclopedia = {
 	"plantEater" : ["plantEater", "field", 20, "o", actions.slice(1,2)],
-	"croc" : ["predator", "water", 10, "^", []],
-	"lion" : ["predator", "field", 50, "@", actions.slice(2, 3)],
+	"predator" : ["predator", "field", 50, "@", actions.slice(2, 3)],
 	"tree" : ["tree", "field", 5, "*", actions.slice(0,1)],
-	"hyppo" : ["bigPlantEater", "field", 200, "o", actions.slice(3)]
 };
 
 
@@ -411,7 +376,8 @@ function paintWater(grid, x, y, waterClassName) {
 			  div.style.height = 100/grid.height +'%';
 			  div.setAttribute("x", i);
 			  div.setAttribute("y", j);
-			  //div.innerHTML = ""+grid.hasElem([i,j]).coords[0]+","+grid.hasElem([i,j]).coords[1];
+			  div.setAttribute("onclick", "addAnimal(this)");
+			  /*div.innerHTML = ""+grid.hasElem([i,j]).coords[0]+","+grid.hasElem([i,j]).coords[1];*/
 			  elem.appendChild(div);		  
 			}
 		}
@@ -437,25 +403,39 @@ function paintAnimal() {
 	world.journal.forEach(animal => document.querySelector('div.elements[x="'+animal.coords[0]+'"][y="'+animal.coords[1]+'"]').classList.add(animal.name))
 }
 
+function addAnimal(el) {
+	const coords = [+el.getAttribute("x"), +el.getAttribute("y")];
+	world.createAnimal(new Animal(...encyclopedia[document.getElementById("animalType").value]), coords);
+	paintAnimal();
+}
+
 	
-window.genElement = function genElement() { //declaring variables In a module context, variables don't automatically get declared globally
-//обработчик кнопки "create world"
-	let [gridX,gridY = gridX] = document.getElementById("gridCount").value.split(",");
+function genElement() { //declaring variables In a module context, variables don't automatically get declared globally
+//РѕР±СЂР°Р±РѕС‚С‡РёРє РєРЅРѕРїРєРё "create world"
+	let [gridX, gridY = gridX] = document.getElementById("gridCount").value.split(",");
 	let fieldCount = document.getElementById("fieldCount").value;
+	let treeCount = document.getElementById("treeCount").value;
 	let animalCount = document.getElementById("animalCount").value;
 	let animalType = document.getElementById("animalType").value;
 	
-//если в поле gridCount указано значение и карта еще не создана -> создаем карту нужного размера
-	if (gridX && !grid.size) {
+//РµСЃР»Рё Р° РїРѕР»Рµ gridCount СѓРєР°Р·Р°РЅРѕ Р·РЅР°С‡РµРЅРёРµ Рё РєР°СЂС‚Р° РµС‰Рµ РЅРµ СЃРѕР·РґР°РЅР° -> СЃРѕР·РґР°РµРј РєР°СЂС‚Сѓ РЅСѓР¶РЅРѕРіРѕ СЂР°Р·РјРµСЂР°
+	if (gridX && !grid.size || (grid.size && +gridX !== grid.size)) {
 		[grid, world] = paintWater(grid, +gridX, +gridY, "elements");
 	}
 
 	if (fieldCount && grid.size && !grid.hasElem("field").length) {
-//если в поле fieldCount указано значение, карта Grid создана, но "земля" еще не размечена на карте	
-	[grid, world] = paintField(grid, +fieldCount, "activeCell");
+//РµСЃР»Рё РІ РїРѕР»Рµ fieldCount СѓРєР°Р·Р°РЅРѕ Р·РЅР°С‡РµРЅРёРµ, РєР°СЂС‚Р° Grid СЃРѕР·РґР°РЅР°, РЅРѕ "Р·РµРјР»СЏ" РµС‰Рµ РЅРµ СЂР°Р·РјРµС‡РµРЅР° РЅР° РєР°СЂС‚Рµ	
+	[grid, world] = paintField(grid, +fieldCount*grid.size/100, "activeCell");
 	}
+
+	if  (treeCount && fieldCount && grid.size && grid.hasElem("field")) {
+		//РµСЃР»Рё РІ РїРѕР»Рµ СѓРєР°Р·Р°РЅРѕ Р·РЅР°С‡РµРЅРёРµ tree, РєР°СЂС‚Р° Grid СЃРѕР·РґР°РЅР°, Рё "Р·РµРјР»СЏ" СЂР°Р·РјРµС‡РµРЅР° РЅР° РєР°СЂС‚Рµ
+			world.createAnimal(new Animal(...encyclopedia["tree"]), +treeCount/100*fieldCount/100*grid.size);
+				paintAnimal();
+			}
+	
 	if  (~Object.keys(encyclopedia).indexOf(animalType) && grid.size && grid.hasElem("field")) {
-//если в поле animalType указано значение, карта Grid создана, и "земля" размечена на карте	
+//РµСЃР»Рё РІ РїРѕР»Рµ animalType СѓРєР°Р·Р°РЅРѕ Р·РЅР°С‡РµРЅРёРµ, РєР°СЂС‚Р° Grid СЃРѕР·РґР°РЅР°, Рё "Р·РµРјР»СЏ" СЂР°Р·РјРµС‡РµРЅР° РЅР° РєР°СЂС‚Рµ
 	world.createAnimal(new Animal(...encyclopedia[animalType]), +animalCount);
 		paintAnimal();
 	}	
